@@ -11,7 +11,19 @@ var babel = require('gulp-babel');
 var jsminify = require('gulp-babel-minify');
 var postcss = require('gulp-postcss');
 var autoprefixer = require('autoprefixer');
+var pug = require('gulp-pug');
+var webp = require('gulp-webp');
 
+// Pug
+
+gulp.task('pug', function buildHTML() {
+  return gulp.src('src/pug/index.pug')
+      .pipe(pug({
+          pretty: true
+      }))
+      .pipe(rename('index.html'))
+      .pipe(gulp.dest('src/'))
+});
 
 // Minify HTML
 
@@ -64,6 +76,7 @@ gulp.task('serve', function () {
 
   gulp.watch("src/sass/**/*.scss", gulp.series('sass'));
   gulp.watch("src/*.html", gulp.series('html')).on('change', browserSync.reload);
+  gulp.watch("src/pug/**/*.pug", gulp.series('pug')).on('change', browserSync.reload);
   gulp.watch("src/js/**/*.js", gulp.series('js')).on('change', browserSync.reload);
 });
 
@@ -81,6 +94,16 @@ gulp.task('imagemin', function () {
       }),
       imagemin.svgo()
     ]))
+    .pipe(gulp.dest('src/img'))
+});
+
+// Create webp images
+
+gulp.task('webp', function () {
+  return gulp.src('src/img/**/*.{png,jpg}')
+    .pipe(webp({
+      quality: 80
+    }))
     .pipe(gulp.dest('src/img'))
 });
 
@@ -106,5 +129,6 @@ gulp.task('del', function () {
 
 // Start tasks
 
-gulp.task('build', gulp.series('imagemin', 'del', 'copy', 'sass', 'js', 'html'));
+gulp.task('build', gulp.series('del', 'copy', 'sass', 'js', 'html'));
 gulp.task('start', gulp.series('build', 'serve'));
+gulp.task('prepimg', gulp.series('webp', 'imagemin'));
