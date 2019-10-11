@@ -43,7 +43,6 @@ gulp.task('js', () =>
   .pipe(babel({
     presets: ['@babel/env']
   }))
-  .pipe(gulp.dest('build/js'))
   .pipe(jsminify({
     mangle: {
       keepClassName: true
@@ -60,7 +59,6 @@ gulp.task('sass', function () {
     .pipe(plumber())
     .pipe(sass())
     .pipe(postcss([ autoprefixer() ]))
-    .pipe(gulp.dest('build/css'))
     .pipe(mincss())
     .pipe(rename('min.style.css'))
     .pipe(gulp.dest('build/css'))
@@ -113,7 +111,6 @@ gulp.task('copy', function () {
   return gulp.src([
       'src/fonts/**/*.{woff,woff2}',
       'src/img/**',
-      'src/js/**/*.js',
       'src/css/**/*.css'
     ], {
       base: 'src'
